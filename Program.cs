@@ -1,4 +1,15 @@
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.SignalR;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<HubOptions>(options =>
+{
+    options.MaximumReceiveMessageSize = null; // unlimited
+});
 
 // Add services to the container.
 builder.Services.AddRazorPages();
@@ -19,7 +30,11 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.MapHub<ChatHub>("/chatHub");  // Map the SignalR hub
+// Map the SignalR hub and configure options
+app.MapHub<ChatHub>("/chatHub", options =>
+{
+    options.ApplicationMaxBufferSize = 102400000; // Set the maximum message size (in bytes)
+});
 
 app.UseAuthorization();
 

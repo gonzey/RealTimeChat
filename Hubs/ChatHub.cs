@@ -1,13 +1,5 @@
 using Microsoft.AspNetCore.SignalR;
 
-// public class ChatHub : Hub
-// {
-//     public async Task SendMessage(string user, string message)
-//     {
-//         await Clients.All.SendAsync("ReceiveMessage", user, message);
-//     }
-// }
-
 public class ChatHub : Hub
 {
     public async Task JoinRoom(string roomName, string user)
@@ -26,4 +18,10 @@ public class ChatHub : Hub
     {
         await Clients.Group(roomName).SendAsync("ReceiveMessage", Context.ConnectionId, user, message);
     }
+
+    public async Task SendMultimediaToRoom(string roomName, string user, string base64String, string fileType)
+    {
+        await Clients.Group(roomName).SendAsync("ReceiveMultimedia", user, base64String, fileType);
+    }
+
 }

@@ -64,6 +64,11 @@
 <!-- Button to trigger the sending of a chat message. -->
 <button id="sendButton">Send</button>
 
+<!-- File input for multimedia content -->
+<br><input type="file" id="fileInput" />
+<button id="uploadButton">Upload</button>
+
+
 @section Scripts {
     <!-- Include the SignalR JavaScript library to enable real-time functionalities. -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.9/signalr.min.js"></script>
@@ -111,6 +116,38 @@
             // Send the message to the specified chat room.
             connection.invoke("SendMessageToRoom", roomName, currentUser, message).catch(err => console.error(err));
         };
+
+        // Function to send multimedia message
+        const sendMultimedia = (file) => {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const base64String = event.target.result.split(',')[1];
+                connection.invoke("SendMultimediaToRoom", roomName, currentUser, base64String, file.type).catch(err => console.error(err));
+            };
+            reader.readAsDataURL(file);
+        };
+
+        // Event listener for receiving multimedia messages from the server.
+        connection.on("ReceiveMultimedia", (user, base64String, fileType) => {
+            const msg = document.createElement("div");
+            msg.className = `chat-bubble ${user === currentUser ? 'user' : 'others'}`;
+
+            if (fileType.startsWith("image/")) {
+                msg.innerHTML = `${user}: <img src="data:${fileType};base64,${base64String}" width="200" />`;
+            } else if (fileType.startsWith("video/")) {
+                msg.innerHTML = `${user}: <video controls width="200"><source src="data:${fileType};base64,${base64String}" type="${fileType}"></video>`;
+            } // Add more types as needed
+
+            document.getElementById("messagesList").appendChild(msg);
+        });
+
+        // Attach click event to the upload button
+        document.getElementById("uploadButton").addEventListener("click", () => {
+            const file = document.getElementById("fileInput").files[0];
+            if (file) {
+                sendMultimedia(file);
+            }
+        });
 
         // Attach click event to the send button
         document.getElementById("sendButton").addEventListener("click", sendMessage);
