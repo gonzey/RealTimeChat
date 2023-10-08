@@ -13,5 +13,7 @@ RUN dotnet publish "RealTimeChat.csproj" -c Release -o /app/publish /p:UseAppHos
 # Use the runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS final
 WORKDIR /app
+EXPOSE 80
+EXPOSE 443
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "RealTimeChat.dll"]

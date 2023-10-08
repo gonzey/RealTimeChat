@@ -1,96 +1,36 @@
 @page
 
-@{
-    var roomName = HttpContext.Request.Query["room"];
-}
+<h1>Chat Room Directory</h1>
 
-<!DOCTYPE html>
-<html>
-<head>
-    <style>
-        /* General Styles */
-        body {
-            font-family: Arial, sans-serif;
+<input type="text" id="newRoomName" placeholder="Room Name" />
+<button onclick="createRoom()">Create Room</button>
+
+<ul id="roomList"></ul>
+
+<script>
+    let rooms = [];  // This would ideally come from a server or database
+
+    function refreshRoomList() {
+        const roomList = document.getElementById('roomList');
+        roomList.innerHTML = '';
+        
+        for (const room of rooms) {
+            const li = document.createElement('li');
+            li.textContent = room;
+            li.onclick = () => joinRoom(room);
+            roomList.appendChild(li);
         }
-        /* Chat Container */
-        #messagesList {
-            max-height: 400px;
-            overflow-y: auto;
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-bottom: 10px;
+    }
+
+    function createRoom() {
+        const roomName = document.getElementById('newRoomName').value;
+        if (roomName && !rooms.includes(roomName)) {
+            rooms.push(roomName);
+            refreshRoomList();
         }
-        /* Chat Bubble */
-        .chat-bubble {
-            border-radius: 12px;
-            padding: 10px;
-            margin: 5px;
-            display: inline-block;
-        }
-        /* Differentiate between user and others */
-        .chat-bubble.user {
-            background-color: #007bff;
-            color: white;
-            float: right;
-            clear: both;
-        }
-        .chat-bubble.others {
-            background-color: #f1f1f1;
-            float: left;
-            clear: both;
-        }
-        </style>
-</head>
-<body>
+    }
 
-<h1>@roomName</h1>
-
-<div id="messagesList"></div>
-<input type="text" id="userInput" placeholder="Name" />
-<input type="text" id="messageInput" placeholder="Message" />
-<button id="sendButton">Send</button>
-
-@section Scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.9/signalr.min.js"></script>
-    <script type="text/javascript">
-        const connection = new signalR.HubConnectionBuilder()
-            .withUrl("/chatHub")
-            .build();
-
-        let currentUser = '';  // Initialize as empty string
-        const roomName = '@roomName';  // Get room name from Razor variable
-
-        connection.on("ReceiveMessage", (user, message) => {
-            const msg = document.createElement("div");
-            msg.className = `chat-bubble ${user === currentUser ? 'user' : 'others'}`;
-            msg.textContent = `${user}: ${message}`;
-            document.getElementById("messagesList").appendChild(msg);
-        });
-
-        connection.start().then(() => {
-            connection.invoke("JoinRoom", roomName);
-        }).catch(err => console.error(err));
-
-        // Function to send message
-        const sendMessage = () => {
-            currentUser = document.getElementById("userInput").value;  // Update the current user
-            const message = document.getElementById("messageInput").value;
-            document.getElementById("messageInput").value = '';
-            connection.invoke("SendMessageToRoom", roomName, `${currentUser}: ${message}`).catch(err => console.error(err));
-        };
-
-        // Attach click event to the send button
-        document.getElementById("sendButton").addEventListener("click", sendMessage);
-
-        // Attach keydown event to the message input
-        document.getElementById("messageInput").addEventListener("keydown", (event) => {
-            if (event.key === "Enter") {
-                event.preventDefault();
-                sendMessage();
-            }
-        });
-    </script>
-}
-
-</body>
-</html>
+    function joinRoom(roomName) {
+        window.location.href = `/Chat?room=${roomName}`;
+    }
+</script>

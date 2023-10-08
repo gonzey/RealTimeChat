@@ -1,46 +1,129 @@
-@page
+@page 
+
 @{
     var roomName = HttpContext.Request.Query["room"];
 }
 
-<h1>Chat Room: @roomName</h1>
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        /* Chat Container */
+        #messagesList {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        /* Chat Bubble */
+        .chat-bubble {
+            border-radius: 12px;
+            padding: 10px;
+            margin: 5px;
+            display: inline-block;
+        }
+        /* Differentiate between user and others */
+        .chat-bubble.user {
+            background-color: #007bff;
+            color: white;
+            float: right;
+            clear: both;
+        }
+        .chat-bubble.others {
+            background-color: #f1f1f1;
+            float: left;
+            clear: both;
+        }
 
-<h1>Real-time Chat</h1>
+         .chat-bubble.system-message {
+            background-color: #4447f0;
+            float: left;
+            clear: both;
+        }
+    </style>
+</head>
 
-<input type="text" id="userInput" placeholder="Namelkndlfknra" />
-<input type="text" id="messageInput" placeholder="Message" />
-<button id="sendButton">Send</button>
+<body>
 
+<h1>@roomName</h1>
+
+<!-- Incoming chat messages. -->
 <div id="messagesList"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.9/signalr.min.js"></script>
+<!-- Input field for the user name. -->
+<input type="text" id="userInput" placeholder="Name" />
 
-<script type="text/javascript">
-    const connection = new signalR.HubConnectionBuilder()
-        .withUrl("/chatHub")
-        .build();
+<!-- Input field for the chat message content. -->
+<input type="text" id="messageInput" placeholder="Message" />
 
-    connection.on("ReceiveMessage", (user, message) => {
-        const msg = document.createElement("div");
-        msg.textContent = `${user}: ${message}`;
-        document.getElementById("messagesList").appendChild(msg);
-    });
+<!-- Button to trigger the sending of a chat message. -->
+<button id="sendButton">Send</button>
 
-    // connection.start().catch(err => console.error(err));
+@section Scripts {
+    <!-- Include the SignalR JavaScript library to enable real-time functionalities. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.9/signalr.min.js"></script>
 
-    connection.start().then(() => {
-        connection.invoke("JoinRoom", "@roomName");
-    }).catch(err => console.error(err));
+    <!-- Handle chat functionalities. -->
+    <script type="text/javascript">
+        // Set up a connection to the SignalR hub on the server.
+        const connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
+        let currentUser = 'anon';  // Initialize as empty string
+        let roomName = '@roomName';
 
-    document.getElementById("sendButton").addEventListener("click", () => {
-        const user = document.getElementById("userInput").value;
-        const message = document.getElementById("messageInput").value;
-        
-        // Clear the input box
-        document.getElementById("messageInput").value = ''; 
-        
-        // connection.invoke("SendMessage", user, message).catch(err => console.error(err));
-        connection.invoke("SendMessageToRoom", "@roomName", `${user}: ${message}`).catch(err => console.error(err));
-    });
-</script>
+        // Update currentUser whenever userInput changes
+        document.getElementById("userInput").addEventListener("input", () => {
+            currentUser = document.getElementById("userInput").value;
+        });
+
+        // Event listener for receiving messages from the server.
+        connection.on("ReceiveMessage", (connectionId, user, message) => {
+            const msg = document.createElement("div");
+            if (user === "Server") {
+                msg.className = "system-message";
+            } else {
+                msg.className = `chat-bubble ${connection.connectionId === connectionId ? 'user' : 'others'}`;
+            }
+            msg.textContent = `${user}: ${message}`;
+            document.getElementById("messagesList").appendChild(msg);
+        });
+
+        // Start the SignalR connection.
+        connection.start().then(() => {
+            // If successful, join the specified chat room (based on the Razor variable).
+            connection.invoke("JoinRoom", roomName, currentUser);
+        }).catch(err => console.error(err));  // Log errors if any.
+
+        // Function to send message
+        const sendMessage = () => {
+            // Fetch values from the input fields.
+            currentUser = document.getElementById("userInput").value;  // Update the current user
+            const message = document.getElementById("messageInput").value;
+            
+            // Clear message input field
+            document.getElementById("messageInput").value = '';
+            
+            // Send the message to the specified chat room.
+            connection.invoke("SendMessageToRoom", roomName, currentUser, message).catch(err => console.error(err));
+        };
+
+        // Attach click event to the send button
+        document.getElementById("sendButton").addEventListener("click", sendMessage);
+
+        // Attach keydown event to the message input
+        document.getElementById("messageInput").addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                sendMessage();
+            }
+        });
+    </script>
+}
+</body>
+</html>
+
