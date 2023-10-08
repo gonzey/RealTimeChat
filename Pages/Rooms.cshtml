@@ -1,0 +1,36 @@
+@page
+
+<h1>Chat Room Directory</h1>
+
+<input type="text" id="newRoomName" placeholder="Room Name" />
+<button onclick="createRoom()">Create Room</button>
+
+<ul id="roomList"></ul>
+
+<script>
+    let rooms = [];  // This would ideally come from a server or database
+
+    function refreshRoomList() {
+        const roomList = document.getElementById('roomList');
+        roomList.innerHTML = '';
+        
+        for (const room of rooms) {
+            const li = document.createElement('li');
+            li.textContent = room;
+            li.onclick = () => joinRoom(room);
+            roomList.appendChild(li);
+        }
+    }
+
+    function createRoom() {
+        const roomName = document.getElementById('newRoomName').value;
+        if (roomName && !rooms.includes(roomName)) {
+            rooms.push(roomName);
+            refreshRoomList();
+        }
+    }
+
+    function joinRoom(roomName) {
+        window.location.href = `/Chat?room=${roomName}`;
+    }
+</script>

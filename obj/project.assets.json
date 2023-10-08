@@ -2038,25 +2038,25 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Egoftcp\\.nuget\\packages\\": {}
+    "/home/codespace/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Egoftcp\\NET_Projects\\NET_Core_Projects\\RealTimeChat\\RealTimeChat.csproj",
+      "projectUniqueName": "/workspaces/RealTimeChat/RealTimeChat.csproj",
       "projectName": "RealTimeChat",
-      "projectPath": "C:\\Users\\Egoftcp\\NET_Projects\\NET_Core_Projects\\RealTimeChat\\RealTimeChat.csproj",
-      "packagesPath": "C:\\Users\\Egoftcp\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Egoftcp\\NET_Projects\\NET_Core_Projects\\RealTimeChat\\obj\\",
+      "projectPath": "/workspaces/RealTimeChat/RealTimeChat.csproj",
+      "packagesPath": "/home/codespace/.nuget/packages/",
+      "outputPath": "/workspaces/RealTimeChat/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Egoftcp\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "/home/codespace/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net7.0"
       ],
       "sources": {
-        "C:\\Users\\Egoftcp\\.dotnet\\sdk\\7.0.306\\Sdks\\Microsoft.NET.Sdk.Web\\library-packs": {},
+        "/usr/local/dotnet/7.0.306/sdk/7.0.306/Sdks/Microsoft.NET.Sdk.Web/library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -2099,7 +2099,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Users\\Egoftcp\\.dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/dotnet/7.0.306/sdk/7.0.306/RuntimeIdentifierGraph.json"
       }
     }
   }
