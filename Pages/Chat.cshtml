@@ -1,0 +1,31 @@
+@page
+
+<h1>Real-time Chat</h1>
+
+<input type="text" id="userInput" placeholder="Name" />
+<input type="text" id="messageInput" placeholder="Message" />
+<button id="sendButton">Send</button>
+
+<div id="messagesList"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.9/signalr.min.js"></script>
+
+<script type="text/javascript">
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/chatHub")
+        .build();
+
+    connection.on("ReceiveMessage", (user, message) => {
+        const msg = document.createElement("div");
+        msg.textContent = `${user}: ${message}`;
+        document.getElementById("messagesList").appendChild(msg);
+    });
+
+    connection.start().catch(err => console.error(err));
+
+    document.getElementById("sendButton").addEventListener("click", () => {
+        const user = document.getElementById("userInput").value;
+        const message = document.getElementById("messageInput").value;
+        connection.invoke("SendMessage", user, message).catch(err => console.error(err));
+    });
+</script>

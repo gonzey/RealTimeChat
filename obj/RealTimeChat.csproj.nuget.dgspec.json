@@ -1,0 +1,71 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\Egoftcp\\NET_Projects\\NET_Core_Projects\\RealTimeChat\\RealTimeChat.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\Egoftcp\\NET_Projects\\NET_Core_Projects\\RealTimeChat\\RealTimeChat.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Egoftcp\\NET_Projects\\NET_Core_Projects\\RealTimeChat\\RealTimeChat.csproj",
+        "projectName": "RealTimeChat",
+        "projectPath": "C:\\Users\\Egoftcp\\NET_Projects\\NET_Core_Projects\\RealTimeChat\\RealTimeChat.csproj",
+        "packagesPath": "C:\\Users\\Egoftcp\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Egoftcp\\NET_Projects\\NET_Core_Projects\\RealTimeChat\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\Egoftcp\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "C:\\Users\\Egoftcp\\.dotnet\\sdk\\7.0.306\\Sdks\\Microsoft.NET.Sdk.Web\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "dependencies": {
+            "Microsoft.AspNetCore.SignalR": {
+              "target": "Package",
+              "version": "[1.1.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Users\\Egoftcp\\.dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
