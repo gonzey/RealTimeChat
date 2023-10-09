@@ -40,8 +40,6 @@ C:/Users/Egoftcp/NET_Projects/NET_Core_Projects/RealTimeChat/obj/Debug/net7.0/re
 /workspaces/RealTimeChat/bin/Debug/net7.0/RealTimeChat.runtimeconfig.json
 /workspaces/RealTimeChat/bin/Debug/net7.0/RealTimeChat.dll
 /workspaces/RealTimeChat/bin/Debug/net7.0/RealTimeChat.pdb
-/workspaces/RealTimeChat/bin/Debug/net7.0/Newtonsoft.Json.dll
-/workspaces/RealTimeChat/bin/Debug/net7.0/System.Net.WebSockets.WebSocketProtocol.dll
 /workspaces/RealTimeChat/obj/Debug/net7.0/RealTimeChat.csproj.AssemblyReference.cache
 /workspaces/RealTimeChat/obj/Debug/net7.0/RealTimeChat.GeneratedMSBuildEditorConfig.editorconfig
 /workspaces/RealTimeChat/obj/Debug/net7.0/RealTimeChat.AssemblyInfoInputs.cache
@@ -60,7 +58,6 @@ C:/Users/Egoftcp/NET_Projects/NET_Core_Projects/RealTimeChat/obj/Debug/net7.0/re
 /workspaces/RealTimeChat/obj/Debug/net7.0/scopedcss/Pages/Shared/_Layout.cshtml.rz.scp.css
 /workspaces/RealTimeChat/obj/Debug/net7.0/scopedcss/bundle/RealTimeChat.styles.css
 /workspaces/RealTimeChat/obj/Debug/net7.0/scopedcss/projectbundle/RealTimeChat.bundle.scp.css
-/workspaces/RealTimeChat/obj/Debug/net7.0/RealTimeChat.csproj.CopyComplete
 /workspaces/RealTimeChat/obj/Debug/net7.0/RealTimeChat.dll
 /workspaces/RealTimeChat/obj/Debug/net7.0/refint/RealTimeChat.dll
 /workspaces/RealTimeChat/obj/Debug/net7.0/RealTimeChat.pdb
