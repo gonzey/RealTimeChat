@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<HubOptions>(options =>
 {
-    options.MaximumReceiveMessageSize = null; // unlimited
+    options.MaximumReceiveMessageSize = 10240 * 10240; 
 });
 
 // Add services to the container.

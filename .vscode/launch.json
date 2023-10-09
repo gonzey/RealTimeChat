@@ -1,5 +1,22 @@
 {
     "configurations": [
+        {
+            "name": ".NET Core Launch (web2)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "/workspaces/RealTimeChat/bin/Debug/net7.0/RealTimeChat.dll",
+            "args": [],
+            "cwd": ".",
+            "stopAtEntry": false,
+            "serverReadyAction": {
+                "action": "openExternally",
+                "pattern": "\\bNow listenin/workspaces/RealTimeChat/bin/Debug/net7.0/RealTimeChat.dllg on:\\s+(https?://\\S+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
     {
         "name": ".NET Core Launch (web)",
         "type": "coreclr",
@@ -18,6 +35,24 @@
         },
         "sourceFileMap": {
             "/Views": "${workspaceFolder}/Views"
+        }
+    }, {
+        "name": "Docker .NET Core Attach",
+        "type": "coreclr",
+        "request": "attach",
+        "processId": "${command:pickRemoteProcess}",
+        "pipeTransport": {
+            "pipeCwd": "${workspaceRoot}",
+            "pipeProgram": "docker",
+            "pipeArgs": [
+                "exec", "-i", "c2-container"
+            ],
+            "quoteArgs": false,
+            "debuggerPath": "/vsdbg/vsdbg"
+        },
+        "sourceFileMap": {
+            "/app/": "${workspaceRoot}/",
+            "/src/": "${workspaceRoot}/"
         }
     }
     ]

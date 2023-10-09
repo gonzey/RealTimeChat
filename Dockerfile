@@ -15,5 +15,11 @@ FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS final
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
+
+# Install the remote debugger
+RUN apt-get update \
+    && apt-get install -y unzip curl \
+    && curl -sSL https://aka.ms/getvsdbgsh | bash /dev/stdin -v latest -l /vsdbg
+
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "RealTimeChat.dll"]

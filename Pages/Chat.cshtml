@@ -76,7 +76,7 @@
     <!-- Handle chat functionalities. -->
     <script type="text/javascript">
         // Set up a connection to the SignalR hub on the server.
-        const connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
+        const connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").withAutomaticReconnect().build();
 
         let currentUser = 'anon';  // Initialize as empty string
         let roomName = '@roomName';
@@ -127,6 +127,60 @@
             reader.readAsDataURL(file);
         };
 
+        // Function to generate a unique identifier for each file upload
+        function generateUniqueFileId() {
+            return Date.now().toString() + Math.random().toString(36).substr(2, 9);
+        }
+
+        // Function to upload file in chunks
+        async function uploadFileInChunks() {
+            @* console.log("uploadFileInChunks is being called");
+            const testArray = new Uint8Array([1, 2, 3, 4, 5]);
+            await connection.invoke('UploadFileChunk', roomName, currentUser, testArray, "testType", "testId"); *@
+
+            const fileInput = document.getElementById("fileInput");
+            const file = fileInput.files[0];
+            if (!file) {
+                return;
+            }
+
+            const fileId = generateUniqueFileId();  // Generate a unique ID for this file upload
+            const chunkSize = 50 * 50; // Bytes
+            let offset = 0;
+
+            while (offset < file.size) {
+                const chunk = file.slice(offset, offset + chunkSize);
+                console.log("About to read a chunk...");
+                const arrayBuffer = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = event => resolve(event.target.result);
+                    reader.onerror = reject;
+                    reader.readAsArrayBuffer(chunk);
+                });
+                console.log("Finished reading a chunk.");
+
+                const byteArray = new Uint8Array(arrayBuffer);
+
+                // Send this chunk to the server.
+                console.log("invoking UploadFileChunk");
+                await connection.invoke('UploadFileChunk', roomName, currentUser, byteArray, file.type, fileId)
+                console.log("Finished invoking UploadFileChunk");
+
+                offset += chunkSize;
+            }
+
+            // Notify the server that the file upload is complete
+            await connection.invoke('FinalizeFileUpload', roomName, currentUser, file.type, fileId).catch(err => console.error("Error in FinalizeFileUpload: ", err));;
+        }
+
+        // Event listener for receiving file chunks from the server.
+        connection.on("ReceiveFileChunk", (user, chunkLength, fileType) => {
+            console.log(`Received a file chunk from ${user} with length ${chunkLength} and type ${fileType}`);
+            // Need to add more logic here to handle the received chunk.
+        });
+
+
+
         // Event listener for receiving multimedia messages from the server.
         connection.on("ReceiveMultimedia", (user, base64String, fileType) => {
             const msg = document.createElement("div");
@@ -141,13 +195,8 @@
             document.getElementById("messagesList").appendChild(msg);
         });
 
-        // Attach click event to the upload button
-        document.getElementById("uploadButton").addEventListener("click", () => {
-            const file = document.getElementById("fileInput").files[0];
-            if (file) {
-                sendMultimedia(file);
-            }
-        });
+        // Attach click event to the upload button to upload file in chunks
+        document.getElementById("uploadButton").addEventListener("click", uploadFileInChunks);
 
         // Attach click event to the send button
         document.getElementById("sendButton").addEventListener("click", sendMessage);
@@ -159,6 +208,25 @@
                 sendMessage();
             }
         });
+
+        // This event is raised when the connection is lost.
+        connection.onclose(async () => {
+            console.log("Connection lost. Reconnecting...");
+            // Need to add custom logic here, such as updating the UI to inform the user.
+        });
+
+        // This event is raised when the client begins reconnecting.
+        connection.onreconnecting(error => {
+            console.log(`Connection lost due to error "${error}". Reconnecting.`);
+            // Add custom logic here.
+        });
+
+        // This event is raised when the client successfully reconnects.
+        connection.onreconnected(connectionId => {
+            console.log(`Connection reestablished. Connected with connectionId "${connectionId}".`);
+            // More custom logic can go here.
+        });
+
     </script>
 }
 </body>
