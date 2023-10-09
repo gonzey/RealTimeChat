@@ -68,22 +68,140 @@
 <br><input type="file" id="fileInput" />
 <button id="uploadButton">Upload</button>
 
-
 @section Scripts {
-    <!-- Include the SignalR JavaScript library to enable real-time functionalities. -->
+    <!-- Include the SignalR JavaScript library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.9/signalr.min.js"></script>
+    <!-- Include the WebTorrent JavaScript library -->
+    <script src="https://cdn.jsdelivr.net/npm/webtorrent@latest/webtorrent.min.js"></script>
 
-    <!-- Handle chat functionalities. -->
     <script type="text/javascript">
-        // Set up a connection to the SignalR hub on the server.
+        // Initialize SignalR connection
         const connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
-        let currentUser = 'anon';  // Initialize as empty string
+        // Initialize WebTorrent client
+        const client = new WebTorrent();
+
+        // Log if WebTorrent client is destroyed
+        console.log("Is WebTorrent client destroyed?", client.destroyed);
+
+        // Log peer addresses (for debugging network issues)
+        client.on('torrent', function (torrent) {
+            torrent.on('wire', function (wire, addr) {
+                console.log("Connected to peer with address", addr);
+            });
+
+            // Log when torrent is ready
+            torrent.on('ready', function () {
+                console.log('Torrent is ready:', torrent.infoHash);
+            });
+        });
+
+        // Listen to global errors
+        client.on('error', function (err) {
+            console.error('Global error from WebTorrent client:', err);
+        });
+
+        // Log current torrents (for debugging)
+        console.log("Current torrents:", client.torrents.map(t => t.infoHash));
+
+        let currentUser = 'anon';
         let roomName = '@roomName';
 
         // Update currentUser whenever userInput changes
         document.getElementById("userInput").addEventListener("input", () => {
             currentUser = document.getElementById("userInput").value;
+        });
+
+        const seedFile = (file) => {
+            client.seed(file, (torrent) => {
+                console.log("Seeding file:", file.name);
+
+                // Call the SignalR method to send torrent details to all clients in the room
+                connection.invoke("SendTorrentDetailsToRoom", roomName, currentUser, file.name, file.size, torrent.infoHash).catch(err => console.error(err));
+            });
+        };
+
+        const addFileBubbleToChat = (infoHash, user) => {
+            // Create a chat bubble div
+            const msg = document.createElement("div");
+            msg.className = 'chat-bubble user';  // or 'others' based on who is sending
+
+            // Create a text element for the timestamp and message
+            const textElement = document.createElement("p");
+            const timestamp = new Date().toLocaleTimeString();
+            textElement.textContent = `${timestamp} - ${user}`;
+            msg.appendChild(textElement);
+
+            // Create a download button
+            const downloadButton = document.createElement("button");
+            downloadButton.innerText = "Download";
+
+            // Add the infoHash as a custom attribute
+            downloadButton.setAttribute("data-infohash", infoHash);
+
+            // Append the download button to the chat bubble
+            msg.appendChild(downloadButton);
+
+            // Append the chat bubble to the messages list
+            document.getElementById("messagesList").appendChild(msg);
+        };
+
+
+        // Event delegation
+        document.getElementById("messagesList").addEventListener("click", function(event) {
+            if (event.target.innerText === "Download") {
+                console.log("Download button clicked");
+                
+                // Get the infoHash from the custom attribute
+                const infoHash = event.target.getAttribute("data-infohash");
+                
+                // Download torrent
+                downloadFile(infoHash);
+            }
+        });
+
+        const downloadFile = (infoHash) => {
+            try {
+                client.add(infoHash, (err, torrent) => {
+                    console.log("downloadFile called with:", infoHash);
+                    if (err) {
+                        console.error("Error adding torrent:", err);
+                        return;
+                    }
+                    
+                    torrent.on('error', function (err) {
+                        console.error('Error in torrent:', err);
+                    });
+
+                    torrent.on('download', (bytes) => {
+                        console.log('just downloaded: ' + bytes);
+                        console.log('total downloaded: ' + torrent.downloaded);
+                        console.log('download speed: ' + torrent.downloadSpeed);
+                        console.log('progress: ' + torrent.progress);
+                    });
+
+                    torrent.on('done', () => {
+                        console.log('torrent download finished');
+                    });
+                });
+            } catch (err) {
+                console.error("Error downloading file:", err);
+            }
+        };
+
+        // Event listener for receiving torrent details from the server.
+        connection.on("ReceiveTorrentDetails", (user, fileName, fileSize, infoHash) => {
+            // Create a chat bubble div
+            console.log("ReceiveTorrentDetails triggered");
+            addFileBubbleToChat(infoHash, user)
+        });
+
+         // Attach click event to the upload button
+        document.getElementById("uploadButton").addEventListener("click", () => {
+            const file = document.getElementById("fileInput").files[0];
+            if (file) {
+                seedFile(file);
+            }
         });
 
         // Event listener for receiving messages from the server.
@@ -117,36 +235,15 @@
             connection.invoke("SendMessageToRoom", roomName, currentUser, message).catch(err => console.error(err));
         };
 
-        // Function to send multimedia message
-        const sendMultimedia = (file) => {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const base64String = event.target.result.split(',')[1];
-                connection.invoke("SendMultimediaToRoom", roomName, currentUser, base64String, file.type).catch(err => console.error(err));
-            };
-            reader.readAsDataURL(file);
-        };
-
-        // Event listener for receiving multimedia messages from the server.
-        connection.on("ReceiveMultimedia", (user, base64String, fileType) => {
-            const msg = document.createElement("div");
-            msg.className = `chat-bubble ${user === currentUser ? 'user' : 'others'}`;
-
-            if (fileType.startsWith("image/")) {
-                msg.innerHTML = `${user}: <img src="data:${fileType};base64,${base64String}" width="200" />`;
-            } else if (fileType.startsWith("video/")) {
-                msg.innerHTML = `${user}: <video controls width="200"><source src="data:${fileType};base64,${base64String}" type="${fileType}"></video>`;
-            } // Add more types as needed
-
-            document.getElementById("messagesList").appendChild(msg);
+        connection.on("JoinedRoom", (room) => {
+            console.log(`Successfully joined room ${room}`);
+            // Now safe to announce torrents, etc.
         });
 
-        // Attach click event to the upload button
-        document.getElementById("uploadButton").addEventListener("click", () => {
-            const file = document.getElementById("fileInput").files[0];
-            if (file) {
-                sendMultimedia(file);
-            }
+        connection.on("UpdateUserList", (userList) => {
+            // Update the UI with the new user list
+            const userListDiv = document.getElementById("userList");
+            userListDiv.innerHTML = userList.join(", ");
         });
 
         // Attach click event to the send button
