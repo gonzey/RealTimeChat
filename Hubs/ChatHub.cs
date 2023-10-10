@@ -42,10 +42,10 @@ public class ChatHub : Hub
         await Clients.Group(roomName).SendAsync("ReceiveMessage", Context.ConnectionId, user, message);
     }
 
-    public async Task SendTorrentDetailsToRoom(string roomName, string user, string fileName, long fileSize, string infoHash)
+    public async Task SendTorrentDetailsToRoom(string roomName, string user, string fileName, long fileSize, string infoHash, string magnetURI)
     {
-        Console.WriteLine($"Announcing new torrent in room {roomName} from user {user} with infoHash {infoHash}");
-        await Clients.Group(roomName).SendAsync("ReceiveTorrentDetails", user, fileName, fileSize, infoHash);
+        Console.WriteLine($"Announcing new torrent in room {roomName} from user {user} with infoHash {infoHash} and magnetURI of {magnetURI}");
+        await Clients.Group(roomName).SendAsync("ReceiveTorrentDetails", user, fileName, fileSize, infoHash, magnetURI);
     }
 
 }

@@ -5,7 +5,7 @@
         "type": "coreclr",
         "request": "launch",
         "preLaunchTask": "build",
-        "program": "/workspaces/RealTimeChat/bin/Debug/net7.0/RealTimeChat.dll",
+        "program": "/Users/talos/realtimechat/RealTimeChat/bin/Debug/net7.0/RealTimeChat.dll",
         "args": [],
         "cwd": "${workspaceFolder}",
         "stopAtEntry": false,

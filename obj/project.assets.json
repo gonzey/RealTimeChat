@@ -8,25 +8,24 @@
     "net7.0": []
   },
   "packageFolders": {
-    "/home/codespace/.nuget/packages/": {}
+    "/Users/talos/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/workspaces/RealTimeChat/RealTimeChat.csproj",
+      "projectUniqueName": "/Users/talos/realtimechat/RealTimeChat/RealTimeChat.csproj",
       "projectName": "RealTimeChat",
-      "projectPath": "/workspaces/RealTimeChat/RealTimeChat.csproj",
-      "packagesPath": "/home/codespace/.nuget/packages/",
-      "outputPath": "/workspaces/RealTimeChat/obj/",
+      "projectPath": "/Users/talos/realtimechat/RealTimeChat/RealTimeChat.csproj",
+      "packagesPath": "/Users/talos/.nuget/packages/",
+      "outputPath": "/Users/talos/realtimechat/RealTimeChat/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/home/codespace/.nuget/NuGet/NuGet.Config"
+        "/Users/talos/.nuget/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net7.0"
       ],
       "sources": {
-        "/usr/local/dotnet/7.0.306/sdk/7.0.306/Sdks/Microsoft.NET.Sdk.Web/library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -63,7 +62,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/dotnet/7.0.306/sdk/7.0.306/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/Users/talos/.vscode-dotnet-sdk/.dotnet/sdk/7.0.100/RuntimeIdentifierGraph.json"
       }
     }
   }

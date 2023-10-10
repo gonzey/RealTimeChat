@@ -9,45 +9,45 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = RealTimeChat
 build_property.RootNamespace = RealTimeChat
-build_property.ProjectDir = /workspaces/RealTimeChat/
+build_property.ProjectDir = /Users/talos/realtimechat/RealTimeChat/
 build_property.RazorLangVersion = 7.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = /workspaces/RealTimeChat
+build_property.MSBuildProjectDirectory = /Users/talos/realtimechat/RealTimeChat
 build_property._RazorSourceGeneratorDebug = 
 
-[/workspaces/RealTimeChat/Pages/Chat.cshtml]
+[/Users/talos/realtimechat/RealTimeChat/Pages/Chat.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvQ2hhdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/workspaces/RealTimeChat/Pages/Error.cshtml]
+[/Users/talos/realtimechat/RealTimeChat/Pages/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvRXJyb3IuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/workspaces/RealTimeChat/Pages/Index.cshtml]
+[/Users/talos/realtimechat/RealTimeChat/Pages/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/workspaces/RealTimeChat/Pages/Privacy.cshtml]
+[/Users/talos/realtimechat/RealTimeChat/Pages/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvUHJpdmFjeS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/workspaces/RealTimeChat/Pages/Rooms.cshtml]
+[/Users/talos/realtimechat/RealTimeChat/Pages/Rooms.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvUm9vbXMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/workspaces/RealTimeChat/Pages/Shared/_ValidationScriptsPartial.cshtml]
+[/Users/talos/realtimechat/RealTimeChat/Pages/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvU2hhcmVkL19WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[/workspaces/RealTimeChat/Pages/_ViewImports.cshtml]
+[/Users/talos/realtimechat/RealTimeChat/Pages/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/workspaces/RealTimeChat/Pages/_ViewStart.cshtml]
+[/Users/talos/realtimechat/RealTimeChat/Pages/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/workspaces/RealTimeChat/Pages/Shared/_Layout.cshtml]
+[/Users/talos/realtimechat/RealTimeChat/Pages/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXMvU2hhcmVkL19MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-fw1c7kz8ln

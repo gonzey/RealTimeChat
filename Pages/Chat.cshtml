@@ -39,7 +39,6 @@
             float: left;
             clear: both;
         }
-
          .chat-bubble.system-message {
             background-color: #4447f0;
             float: left;
@@ -64,7 +63,7 @@
 <!-- Button to trigger the sending of a chat message. -->
 <button id="sendButton">Send</button>
 
-<!-- File input for multimedia content -->
+<!-- File input for uploaded content as a torrent -->
 <br><input type="file" id="fileInput" />
 <button id="uploadButton">Upload</button>
 
@@ -115,13 +114,21 @@
         const seedFile = (file) => {
             client.seed(file, (torrent) => {
                 console.log("Seeding file:", file.name);
+                console.log(`Seeding ${torrent.magnetURI}`);
+                  torrent.on('error', function (err) {
+                    console.error('Error in torrent:', err);
+                });
+                
+                torrent.on('warning', function (warning) {
+                    console.warn('Warning:', warning);
+                });
 
                 // Call the SignalR method to send torrent details to all clients in the room
-                connection.invoke("SendTorrentDetailsToRoom", roomName, currentUser, file.name, file.size, torrent.infoHash).catch(err => console.error(err));
+                connection.invoke("SendTorrentDetailsToRoom", roomName, currentUser, file.name, file.size, torrent.infoHash, torrent.magnetURI).catch(err => console.error(err));
             });
         };
 
-        const addFileBubbleToChat = (infoHash, user) => {
+        const addFileBubbleToChat = (infoHash, magnetURI, user) => {
             // Create a chat bubble div
             const msg = document.createElement("div");
             msg.className = 'chat-bubble user';  // or 'others' based on who is sending
@@ -139,6 +146,9 @@
             // Add the infoHash as a custom attribute
             downloadButton.setAttribute("data-infohash", infoHash);
 
+            // Add the magnetURI as a custom attribute
+            downloadButton.setAttribute("data-magnet", magnetURI);
+
             // Append the download button to the chat bubble
             msg.appendChild(downloadButton);
 
@@ -146,31 +156,41 @@
             document.getElementById("messagesList").appendChild(msg);
         };
 
-
-        // Event delegation
+        // Listener for download click
         document.getElementById("messagesList").addEventListener("click", function(event) {
             if (event.target.innerText === "Download") {
                 console.log("Download button clicked");
                 
                 // Get the infoHash from the custom attribute
                 const infoHash = event.target.getAttribute("data-infohash");
+                const magnetURI = event.target.getAttribute("data-magnet");
                 
                 // Download torrent
-                downloadFile(infoHash);
+                downloadFile(infoHash, magnetURI);
             }
         });
 
-        const downloadFile = (infoHash) => {
+        const downloadFile = (infoHash, magnetURI) => {
+            const existingTorrent = client.get(magnetURI);
+                if (existingTorrent) {
+                    console.log("Torrent already added");
+                    existingTorrent.on('noPeers', function (announceType) {
+                        console.log('No peers found for this torrent.');
+                    });
+
+                    return;
+                }
+            
             try {
-                client.add(infoHash, (err, torrent) => {
+                client.add(magnetURI, (torrent) => {
                     console.log("downloadFile called with:", infoHash);
-                    if (err) {
-                        console.error("Error adding torrent:", err);
-                        return;
-                    }
                     
                     torrent.on('error', function (err) {
                         console.error('Error in torrent:', err);
+                    });
+
+                    torrent.on('noPeers', function (announceType) {
+                        console.log('No peers found for this torrent.');
                     });
 
                     torrent.on('download', (bytes) => {
@@ -182,6 +202,32 @@
 
                     torrent.on('done', () => {
                         console.log('torrent download finished');
+                        // Assuming we just grab the first file in the torrent files array for now
+                        const file = torrent.files[0];
+                        
+                        file.getBuffer((err, buffer) => {
+                            if (err) {
+                                console.error('Error getting buffer:', err);
+                                return;
+                            }
+                            
+                            // Create a Blob from the buffer
+                            const blob = new Blob([buffer], { type: file.type });
+                            
+                            // Create an Object URL from the Blob
+                            const url = window.URL.createObjectURL(blob);
+                            
+                            // Create a download link and click it
+                            const a = document.createElement('a');
+                            a.style.display = 'none';
+                            a.href = url;
+                            a.download = file.name;
+                            document.body.appendChild(a);
+                            a.click();
+                            
+                            // Release the Object URL
+                            window.URL.revokeObjectURL(url);
+                        });
                     });
                 });
             } catch (err) {
@@ -190,10 +236,10 @@
         };
 
         // Event listener for receiving torrent details from the server.
-        connection.on("ReceiveTorrentDetails", (user, fileName, fileSize, infoHash) => {
+        connection.on("ReceiveTorrentDetails", (user, fileName, fileSize, infoHash, magnetURI) => {
             // Create a chat bubble div
             console.log("ReceiveTorrentDetails triggered");
-            addFileBubbleToChat(infoHash, user)
+            addFileBubbleToChat(infoHash, magnetURI, user)
         });
 
          // Attach click event to the upload button
